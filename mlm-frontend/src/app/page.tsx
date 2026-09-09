@@ -174,12 +174,12 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-gold-500 selection:text-slate-950">
       {/* Navigation Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 z-50">
-            <img src={siteLogo} alt="Proyojon Plus Logo" className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl shadow-lg shadow-gold-500/20 object-cover" />
-            <div className="flex flex-col">
-              <span className="font-bold text-lg sm:text-xl text-gradient-gold tracking-tight leading-tight">{t.brand_name || "Proyojon Plus"}</span>
-              <span className="hidden sm:block text-[10px] text-muted-foreground uppercase tracking-widest font-semibold leading-tight mt-0.5">
+        <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-2 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-3 z-50 shrink-0 min-w-0">
+            <img src={siteLogo} alt="Proyojon Plus Logo" className="h-8 w-8 sm:h-12 sm:w-12 rounded-xl shadow-lg shadow-gold-500/20 object-cover shrink-0" />
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-[15px] sm:text-xl text-gradient-gold tracking-tight leading-tight whitespace-nowrap truncate">{t.brand_name || "Proyojon Plus"}</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground uppercase tracking-widest font-semibold leading-tight mt-0.5 whitespace-nowrap">
                 Investment Platform
               </span>
             </div>
@@ -195,26 +195,27 @@ export default function LandingPage() {
             <a href="#stats" className="hover:text-gold-400 transition-colors">{t.nav_about}</a>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 shrink-0">
             <LanguageSwitcher />
             {user ? (
               <Link href={user.role === "admin" ? "/admin" : "/dashboard"}>
-                <Button className="bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold shadow-lg shadow-gold-500/20 text-sm gap-2">
-                  <span>{user.role === "admin" ? t.nav_admin : t.nav_dashboard}</span>
-                  <ArrowRight className="h-4 w-4" />
+                <Button className="bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold shadow-lg shadow-gold-500/20 text-[11px] sm:text-sm px-2 sm:px-4 gap-1 sm:gap-2 h-8 sm:h-10">
+                  <span className="hidden sm:inline">{user.role === "admin" ? t.nav_admin : t.nav_dashboard}</span>
+                  <span className="sm:hidden">Dashboard</span>
+                  <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </Link>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="text-foreground hover:text-gold-400 hover:bg-gold-500/10 font-semibold text-sm">
+                  <Button variant="ghost" className="text-foreground hover:text-gold-400 hover:bg-gold-500/10 font-semibold text-[11px] sm:text-sm px-1.5 sm:px-4 h-8 sm:h-10">
                     {t.nav_login}
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold shadow-lg shadow-gold-500/20 text-sm gap-2">
+                  <Button className="bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold shadow-lg shadow-gold-500/20 text-[11px] sm:text-sm px-2.5 sm:px-4 gap-1 sm:gap-2 h-8 sm:h-10">
                     <span>{t.nav_register}</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="hidden sm:inline h-3 w-3 sm:h-4 sm:w-4" />
                   </Button>
                 </Link>
               </>

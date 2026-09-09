@@ -55,8 +55,8 @@ export function Header({ onMobileMenuToggle, userBalance = 0 }: HeaderProps) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <span className="font-bold text-lg text-gradient-gold">{t.brand_name || "Proyojon Plus"}</span>
+          <div className="flex items-center gap-2 md:hidden overflow-hidden">
+            <span className="font-bold text-base sm:text-lg text-gradient-gold whitespace-nowrap truncate">{t.brand_name || "Proyojon Plus"}</span>
           </div>
         </div>
 
@@ -88,7 +88,7 @@ export function Header({ onMobileMenuToggle, userBalance = 0 }: HeaderProps) {
           <LanguageSwitcher />
 
           {/* Home Button */}
-          <Link href="/">
+          <Link href="/" className="hidden sm:block">
             <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full bg-secondary/60 hover:bg-gold-500/10 border border-transparent hover:border-gold-500/30 transition-colors text-foreground hover:text-gold-400">
               <Home className="h-5 w-5" />
             </Button>
