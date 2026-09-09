@@ -218,15 +218,15 @@ const loginUser = async (req, res) => {
         // --- Set Cookies ---
         res.cookie('access_token', accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            secure: true,
+            sameSite: 'None',
             maxAge: 15 * 60 * 1000 // 15 minutes
         });
 
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            secure: true,
+            sameSite: 'None',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -314,8 +314,8 @@ const refreshToken = async (req, res) => {
 
         res.cookie('access_token', newAccessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
+            secure: true,
+            sameSite: 'None',
             maxAge: 15 * 60 * 1000 // 15 minutes
         });
 
@@ -330,8 +330,8 @@ const refreshToken = async (req, res) => {
  * Clear authentication cookies
  */
 const logoutUser = (req, res) => {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    res.clearCookie('access_token', { sameSite: 'None', secure: true, httpOnly: true });
+    res.clearCookie('refresh_token', { sameSite: 'None', secure: true, httpOnly: true });
     return res.status(200).json({ success: true, message: 'Logged out successfully.' });
 };
 
