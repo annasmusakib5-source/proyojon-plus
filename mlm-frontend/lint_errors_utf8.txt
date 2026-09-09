@@ -1,0 +1,600 @@
+﻿
+> mlm-frontend@0.1.0 lint
+> eslint
+
+
+E:\Proyojon plus\mlm-frontend\src\app\(auth)\login\page.tsx
+  16:9  warning  'router' is assigned a value but never used                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  36:9  warning  Do not use `window.location.href` to navigate to internal Next.js pages. Use `redirect()` in the render phase, or `useRouter().push()` in Client Components' event handlers instead. See: https://nextjs.org/docs/messages/no-location-assign-relative-destination  @next/next/no-location-assign-relative-destination
+  38:9  warning  Do not use `window.location.href` to navigate to internal Next.js pages. Use `redirect()` in the render phase, or `useRouter().push()` in Client Components' event handlers instead. See: https://nextjs.org/docs/messages/no-location-assign-relative-destination  @next/next/no-location-assign-relative-destination
+
+E:\Proyojon plus\mlm-frontend\src\app\(auth)\register\page.tsx
+  17:9   warning  'setUser' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  51:13  warning  'res' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\dealers\page.tsx
+  11:3   warning  'Clock' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  36:21  error    Error: Cannot access variable before it is declared
+
+`fetchApps` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\dealers\page.tsx:36:21
+  34 |   const [processing, setProcessing] = useState<number | null>(null);
+  35 |
+> 36 |   useEffect(() => { fetchApps(); }, [filter]);
+     |                     ^^^^^^^^^ `fetchApps` accessed before it is declared
+  37 |
+  38 |   const fetchApps = async () => {
+  39 |     try {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\dealers\page.tsx:38:3
+  36 |   useEffect(() => { fetchApps(); }, [filter]);
+  37 |
+> 38 |   const fetchApps = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |     try {
+     | ^^^^^^^^^
+> 40 |       const params: Record<string, string> = {};
+     | ^^^^^^^^^
+> 41 |       if (filter) params.status = filter;
+     | ^^^^^^^^^
+> 42 |       const res = await api.get("/admin/dealer-applications", { params });
+     | ^^^^^^^^^
+> 43 |       setApps(res.data.data || []);
+     | ^^^^^^^^^
+> 44 |     } catch { toast.error("Failed to fetch applications"); }
+     | ^^^^^^^^^
+> 45 |     finally { setLoading(false); }
+     | ^^^^^^^^^
+> 46 |   };
+     | ^^^^^ `fetchApps` is declared here
+  47 |
+  48 |   const handleAction = async (id: number, action: "approve" | "reject") => {
+  49 |     setProcessing(id);  react-hooks/immutability
+  36:37  warning  React Hook useEffect has a missing dependency: 'fetchApps'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react-hooks/exhaustive-deps
+  54:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\gallery\page.tsx
+   40:5   error    Error: Cannot access variable before it is declared
+
+`fetchGallery` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\gallery\page.tsx:40:5
+  38 |
+  39 |   useEffect(() => {
+> 40 |     fetchGallery();
+     |     ^^^^^^^^^^^^ `fetchGallery` accessed before it is declared
+  41 |   }, []);
+  42 |
+  43 |   const fetchGallery = async () => {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\gallery\page.tsx:43:3
+  41 |   }, []);
+  42 |
+> 43 |   const fetchGallery = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |     try {
+     | ^^^^^^^^^
+> 45 |       setLoading(true);
+     ΓÇª
+     | ^^^^^^^^^
+> 52 |     }
+     | ^^^^^^^^^
+> 53 |   };
+     | ^^^^^ `fetchGallery` is declared here
+  54 |
+  55 |   const resetForm = () => {
+  56 |     setForm({ title: "", image_url: "", category: "Events", sort_order: "0" });  react-hooks/immutability
+   71:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  172:77  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react/no-unescaped-entities
+  172:87  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react/no-unescaped-entities
+  182:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @next/next/no-img-element
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\notices\page.tsx
+  14:12  warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  41:21  error    Error: Cannot access variable before it is declared
+
+`fetchNotices` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\notices\page.tsx:41:21
+  39 |   });
+  40 |
+> 41 |   useEffect(() => { fetchNotices(); }, []);
+     |                     ^^^^^^^^^^^^ `fetchNotices` accessed before it is declared
+  42 |
+  43 |   const fetchNotices = async () => {
+  44 |     try {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\notices\page.tsx:43:3
+  41 |   useEffect(() => { fetchNotices(); }, []);
+  42 |
+> 43 |   const fetchNotices = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |     try {
+     | ^^^^^^^^^
+> 45 |       const res = await api.get("/notices");
+     | ^^^^^^^^^
+> 46 |       setNotices(res.data.data || []);
+     | ^^^^^^^^^
+> 47 |     } catch {
+     | ^^^^^^^^^
+> 48 |       toast.error("Failed to fetch notices");
+     | ^^^^^^^^^
+> 49 |     } finally {
+     | ^^^^^^^^^
+> 50 |       setLoading(false);
+     | ^^^^^^^^^
+> 51 |     }
+     | ^^^^^^^^^
+> 52 |   };
+     | ^^^^^ `fetchNotices` is declared here
+  53 |
+  54 |   const resetForm = () => {
+  55 |     setForm({ title: "", content: "", type: "ticker", is_active: true, sort_order: "0" });  react-hooks/immutability
+  70:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\orders\page.tsx
+   9:3   warning  'CheckCircle2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  10:3   warning  'XCircle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  11:3   warning  'Truck' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  13:3   warning  'Clock' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  14:3   warning  'Eye' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  61:21  error    Error: Cannot access variable before it is declared
+
+`fetchOrders` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\orders\page.tsx:61:21
+  59 |   const [updating, setUpdating] = useState<number | null>(null);
+  60 |
+> 61 |   useEffect(() => { fetchOrders(); }, [filter]);
+     |                     ^^^^^^^^^^^ `fetchOrders` accessed before it is declared
+  62 |
+  63 |   const fetchOrders = async () => {
+  64 |     try {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\orders\page.tsx:63:3
+  61 |   useEffect(() => { fetchOrders(); }, [filter]);
+  62 |
+> 63 |   const fetchOrders = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |     try {
+     | ^^^^^^^^^
+> 65 |       const params: Record<string, string> = {};
+     | ^^^^^^^^^
+> 66 |       if (filter) params.status = filter;
+     | ^^^^^^^^^
+> 67 |       const res = await api.get("/admin/orders", { params });
+     | ^^^^^^^^^
+> 68 |       setOrders(res.data.data || []);
+     | ^^^^^^^^^
+> 69 |     } catch { toast.error("Failed to fetch orders"); }
+     | ^^^^^^^^^
+> 70 |     finally { setLoading(false); }
+     | ^^^^^^^^^
+> 71 |   };
+     | ^^^^^ `fetchOrders` is declared here
+  72 |
+  73 |   const handleStatusUpdate = async (orderId: number, newStatus: string) => {
+  74 |     setUpdating(orderId);  react-hooks/immutability
+  61:39  warning  React Hook useEffect has a missing dependency: 'fetchOrders'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react-hooks/exhaustive-deps
+  79:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\page.tsx
+    9:3   warning  'Zap' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   53:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   53:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+   61:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\page.tsx:61:5
+  59 |
+  60 |   useEffect(() => {
+> 61 |     fetchAdminData();
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  62 |   }, []);
+  63 |
+  64 |   const handleStatusChange = async (userId: number, newStatus: string) => {  react-hooks/set-state-in-effect
+   71:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+   98:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  112:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  112:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  147:52  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react/no-unescaped-entities
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\products\page.tsx
+  12:3   warning  'Search' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  45:21  error    Error: Cannot access variable before it is declared
+
+`fetchProducts` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\products\page.tsx:45:21
+  43 |   });
+  44 |
+> 45 |   useEffect(() => { fetchProducts(); }, []);
+     |                     ^^^^^^^^^^^^^ `fetchProducts` accessed before it is declared
+  46 |
+  47 |   const fetchProducts = async () => {
+  48 |     try {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\products\page.tsx:47:3
+  45 |   useEffect(() => { fetchProducts(); }, []);
+  46 |
+> 47 |   const fetchProducts = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 48 |     try {
+     | ^^^^^^^^^
+> 49 |       const res = await api.get("/admin/products");
+     | ^^^^^^^^^
+> 50 |       setProducts(res.data.data || []);
+     | ^^^^^^^^^
+> 51 |     } catch { toast.error("Failed to fetch products"); }
+     | ^^^^^^^^^
+> 52 |     finally { setLoading(false); }
+     | ^^^^^^^^^
+> 53 |   };
+     | ^^^^^ `fetchProducts` is declared here
+  54 |
+  55 |   const resetForm = () => {
+  56 |     setForm({ name: "", category: "other", price: "", pv_value: "", description: "", image_url: "", stock: "0", is_featured: false, dealer_commission_percentage: "5" });  react-hooks/immutability
+  93:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\settings\page.tsx
+  13:10  warning  'settings' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-unused-vars
+  23:5   error    Error: Cannot access variable before it is declared
+
+`fetchSettings` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\settings\page.tsx:23:5
+  21 |
+  22 |   useEffect(() => {
+> 23 |     fetchSettings();
+     |     ^^^^^^^^^^^^^ `fetchSettings` accessed before it is declared
+  24 |   }, []);
+  25 |
+  26 |   const fetchSettings = async () => {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\admin\settings\page.tsx:26:3
+  24 |   }, []);
+  25 |
+> 26 |   const fetchSettings = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 27 |     try {
+     | ^^^^^^^^^
+> 28 |       setLoading(true);
+     ΓÇª
+     | ^^^^^^^^^
+> 45 |     }
+     | ^^^^^^^^^
+> 46 |   };
+     | ^^^^^ `fetchSettings` is declared here
+  47 |
+  48 |   const handleSave = async () => {
+  49 |     try {  react-hooks/immutability
+  35:37  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-explicit-any
+  41:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  61:14  warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\dashboard\page.tsx
+   51:54   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+   74:16   warning  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   74:21   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  305:106  error    Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\dashboard\page.tsx:305:106
+  303 |                 </CardTitle>
+  304 |                 <p className="text-xs text-muted-foreground">
+> 305 |                   {t.gold_purchased} {new Date(activePackage.activated_at || activePackage.created_at || Date.now()).toLocaleDateString()}
+      |                                                                                                          ^^^^^^^^^^ Cannot call impure function
+  306 |                 </p>
+  307 |               </div>
+  308 |             </div>  react-hooks/purity
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\dealer-apply\page.tsx
+    8:3   warning  'FileText' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   22:62  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   34:5   error    Error: Cannot access variable before it is declared
+
+`fetchDealerStatus` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\dealer-apply\page.tsx:34:5
+  32 |
+  33 |   useEffect(() => {
+> 34 |     fetchDealerStatus();
+     |     ^^^^^^^^^^^^^^^^^ `fetchDealerStatus` accessed before it is declared
+  35 |   }, []);
+  36 |
+  37 |   const fetchDealerStatus = async () => {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\dealer-apply\page.tsx:37:3
+  35 |   }, []);
+  36 |
+> 37 |   const fetchDealerStatus = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |     try {
+     | ^^^^^^^^^
+> 39 |       const res = await api.get("/dealer/status");
+     ΓÇª
+     | ^^^^^^^^^
+> 48 |     }
+     | ^^^^^^^^^
+> 49 |   };
+     | ^^^^^ `fetchDealerStatus` is declared here
+  50 |
+  51 |   const handleSubmit = async () => {
+  52 |     setError("");  react-hooks/immutability
+   71:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  126:44  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react/no-unescaped-entities
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\layout.tsx
+  12:11  warning  'setUser' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\network\page.tsx
+   7:41  warning  'CardTitle' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   7:52  warning  'CardDescription' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  37:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  45:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\network\page.tsx:45:5
+  43 |
+  44 |   useEffect(() => {
+> 45 |     fetchNetwork(level, page);
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  46 |   }, [level, page]);
+  47 |
+  48 |   const handleTabChange = (val: string) => {  react-hooks/set-state-in-effect
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\orders\page.tsx
+  57:5  error  Error: Cannot access variable before it is declared
+
+`fetchOrders` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\orders\page.tsx:57:5
+  55 |
+  56 |   useEffect(() => {
+> 57 |     fetchOrders();
+     |     ^^^^^^^^^^^ `fetchOrders` accessed before it is declared
+  58 |   }, []);
+  59 |
+  60 |   const fetchOrders = async () => {
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\orders\page.tsx:60:3
+  58 |   }, []);
+  59 |
+> 60 |   const fetchOrders = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 61 |     try {
+     | ^^^^^^^^^
+> 62 |       const res = await api.get("/orders");
+     | ^^^^^^^^^
+> 63 |       setOrders(res.data.data || []);
+     | ^^^^^^^^^
+> 64 |     } catch (err) {
+     | ^^^^^^^^^
+> 65 |       console.error("Failed to fetch orders:", err);
+     | ^^^^^^^^^
+> 66 |     } finally {
+     | ^^^^^^^^^
+> 67 |       setLoading(false);
+     | ^^^^^^^^^
+> 68 |     }
+     | ^^^^^^^^^
+> 69 |   };
+     | ^^^^^ `fetchOrders` is declared here
+  70 |
+  71 |   const toggleExpand = (orderId: number) => {
+  72 |     setExpandedOrder(expandedOrder === orderId ? null : orderId);  react-hooks/immutability
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\packages\page.tsx
+   33:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+   41:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\packages\page.tsx:41:5
+  39 |
+  40 |   useEffect(() => {
+> 41 |     fetchPackages();
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |   }, []);
+  43 |
+  44 |   const handlePurchase = async (packageType: string) => {  react-hooks/set-state-in-effect
+   52:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+   67:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  221:60  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\packages\page.tsx:221:60
+  219 |                 </div>
+  220 |                 <p className="text-xs text-muted-foreground">
+> 221 |                   Purchased: {new Date(pkg.activated_at || Date.now()).toLocaleDateString()}
+      |                                                            ^^^^^^^^^^ Cannot call impure function
+  222 |                 </p>
+  223 |
+  224 |                 {pkg.package_name === "Gold" && (                                                                                                                                                                                                    react-hooks/purity
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\profile\page.tsx
+   5:36  warning  'Calendar' is defined but never used              @typescript-eslint/no-unused-vars
+   5:46  warning  'Key' is defined but never used                   @typescript-eslint/no-unused-vars
+   7:10  warning  'Button' is defined but never used                @typescript-eslint/no-unused-vars
+   9:8   warning  'toast' is defined but never used                 @typescript-eslint/no-unused-vars
+  13:10  warning  'profileData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  13:50  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  14:10  warning  'loading' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\transactions\page.tsx
+  4:65  warning  'Filter' is defined but never used  @typescript-eslint/no-unused-vars
+  9:8   warning  'toast' is defined but never used   @typescript-eslint/no-unused-vars
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\transfer\page.tsx
+   4:16  warning  'UserCheck' is defined but never used                            @typescript-eslint/no-unused-vars
+   4:27  warning  'ShieldAlert' is defined but never used                          @typescript-eslint/no-unused-vars
+  36:19  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  52:79  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+E:\Proyojon plus\mlm-frontend\src\app\(dashboard)\withdraw\page.tsx
+  47:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+E:\Proyojon plus\mlm-frontend\src\app\cart\page.tsx
+   23:3   warning  'Home' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   24:3   warning  'ChevronRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   28:9   warning  'router' is assigned a value but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   72:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  354:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+E:\Proyojon plus\mlm-frontend\src\app\gallery\page.tsx
+   28:5   error    Error: Cannot access variable before it is declared
+
+`fetchGallery` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\gallery\page.tsx:28:5
+  26 |
+  27 |   useEffect(() => {
+> 28 |     fetchGallery();
+     |     ^^^^^^^^^^^^ `fetchGallery` accessed before it is declared
+  29 |   }, []);
+  30 |
+  31 |   const fetchGallery = async () => {
+
+E:\Proyojon plus\mlm-frontend\src\app\gallery\page.tsx:31:3
+  29 |   }, []);
+  30 |
+> 31 |   const fetchGallery = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 32 |     try {
+     | ^^^^^^^^^
+> 33 |       const res = await api.get("/notices/gallery");
+     | ^^^^^^^^^
+> 34 |       setImages(res.data.data || []);
+     | ^^^^^^^^^
+> 35 |     } catch (err) {
+     | ^^^^^^^^^
+> 36 |       console.error("Failed to fetch gallery:", err);
+     | ^^^^^^^^^
+> 37 |     } finally {
+     | ^^^^^^^^^
+> 38 |       setLoading(false);
+     | ^^^^^^^^^
+> 39 |     }
+     | ^^^^^^^^^
+> 40 |   };
+     | ^^^^^ `fetchGallery` is declared here
+  41 |
+  42 |   return (
+  43 |     <div className="min-h-screen bg-background">  react-hooks/immutability
+   91:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @next/next/no-img-element
+  120:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @next/next/no-img-element
+
+E:\Proyojon plus\mlm-frontend\src\app\page.tsx
+    7:3   warning  'ShieldCheck' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    9:3   warning  'Award' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   10:3   warning  'Layers' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   12:3   warning  'Gift' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   15:3   warning  'Users' is defined but never used                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+   21:3   warning  'ChevronRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  300:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  443:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+E:\Proyojon plus\mlm-frontend\src\app\shop\page.tsx
+    6:24  warning  'CartItem' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   10:3   warning  'Filter' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   13:3   warning  'Minus' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   64:5   error    Error: Cannot access variable before it is declared
+
+`fetchProducts` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+E:\Proyojon plus\mlm-frontend\src\app\shop\page.tsx:64:5
+  62 |
+  63 |   useEffect(() => {
+> 64 |     fetchProducts();
+     |     ^^^^^^^^^^^^^ `fetchProducts` accessed before it is declared
+  65 |   }, [category, search]);
+  66 |
+  67 |   const fetchProducts = async () => {
+
+E:\Proyojon plus\mlm-frontend\src\app\shop\page.tsx:67:3
+  65 |   }, [category, search]);
+  66 |
+> 67 |   const fetchProducts = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |     setLoading(true);
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 69 |     try {
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 79 |     }
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 80 |   };
+     | ^^^^^ `fetchProducts` is declared here
+  81 |
+  82 |   const handleAddToCart = (product: Product) => {
+  83 |     addItem({  react-hooks/immutability
+   65:6   warning  React Hook useEffect has a missing dependency: 'fetchProducts'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-hooks/exhaustive-deps
+  227:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @next/next/no-img-element
+
+E:\Proyojon plus\mlm-frontend\src\components\providers.tsx
+  13:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Proyojon plus\mlm-frontend\src\components\providers.tsx:13:5
+  11 |
+  12 |   useEffect(() => {
+> 13 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |   }, []);
+  15 |   const [queryClient] = useState(
+  16 |     () =>  react-hooks/set-state-in-effect
+
+E:\Proyojon plus\mlm-frontend\src\components\ui\ImageUpload.tsx
+    4:44  warning  'ImageIcon' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   62:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  151:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+E:\Proyojon plus\mlm-frontend\src\components\ui\LanguageSwitcher.tsx
+  11:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Proyojon plus\mlm-frontend\src\components\ui\LanguageSwitcher.tsx:11:5
+   9 |
+  10 |   useEffect(() => {
+> 11 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  12 |   }, []);
+  13 |
+  14 |   if (!mounted) return null;  react-hooks/set-state-in-effect
+
+E:\Proyojon plus\mlm-frontend\src\lib\axios.ts
+  26:16  warning  'refreshError' is defined but never used                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  29:11  warning  Do not use `window.location.href` to navigate to internal Next.js pages. Use `redirect()` in the render phase, or `useRouter().push()` in Client Components' event handlers instead. See: https://nextjs.org/docs/messages/no-location-assign-relative-destination  @next/next/no-location-assign-relative-destination
+
+E:\Proyojon plus\mlm-frontend\src\proxy.ts
+  7:7  warning  'adminRoutes' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 106 problems (45 errors, 61 warnings)
+

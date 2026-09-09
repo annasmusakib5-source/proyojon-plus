@@ -1,0 +1,453 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================
+// ENUMS
+// ========================
+
+enum UserStatus {
+  active
+  inactive
+  banned
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+enum PackageStatus {
+  active
+  expired
+  canceled
+}
+
+enum TransactionType {
+  credit
+  debit
+}
+
+enum TransactionCategory {
+  deposit
+  withdrawal
+  transfer
+  generation_bonus
+  referral_bonus
+  club_bonus
+  gold_daily_drip
+  due_account_penalty
+}
+
+enum WithdrawalMethod {
+  Bank
+  bKash
+  Nagad
+  Rocket
+}
+
+enum WithdrawalStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ProductStatus {
+  active
+  inactive
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+enum DealerApplicationStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ProductCategory {
+  healthcare
+  grocery
+  organic
+  cosmetics
+  accessories
+  other
+}
+
+enum ClubType {
+  daily
+  shareholder
+  hajj
+  hajj_lottery
+  salary
+  reward
+  monthly_prize
+}
+
+// ========================
+// MODELS
+// ========================
+
+/// User accounts - Phone number only auth, self-referencing sponsor hierarchy for MLM
+model User {
+  id            Int        @id @default(autoincrement())
+  name          String?    @db.VarChar(100)
+  username      String?    @unique @db.VarChar(50)
+  phone         String     @unique @db.VarChar(15)
+  password      String     @db.VarChar(255)
+  sponsorId     Int?       @map("sponsor_id")
+  status        UserStatus @default(inactive)
+  role          UserRole   @default(user)
+  isDealer      Boolean    @default(false) @map("is_dealer")
+  accumulatedPv Decimal    @default(0.00) @map("accumulated_pv") @db.Decimal(15, 2)
+  sp            Decimal    @default(0.00) @db.Decimal(15, 2)
+  gp            Decimal    @default(0.00) @db.Decimal(15, 2)
+  lastActiveAt  DateTime?  @map("last_active_at")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  // Self-referencing relationship for MLM generation tree
+  sponsor       User?      @relation("SponsorTree", fields: [sponsorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  referrals     User[]     @relation("SponsorTree")
+
+  // One-to-One: each user has exactly one wallet
+  wallet        Wallet?
+
+  // One-to-Many relationships
+  userPackages      UserPackage[]
+  transactions      Transaction[]
+  withdrawals       Withdrawal[]
+  activityLogs      UserActivityLog[]
+
+  // Fund Transfer relationships (sender and receiver)
+  sentTransfers     FundTransfer[] @relation("SenderTransfers")
+  receivedTransfers FundTransfer[] @relation("ReceiverTransfers")
+
+  // Club memberships
+  clubMemberships          ClubMembership[]
+
+  // Distribution history (admin who triggered)
+  triggeredDistributions   ClubDistributionHistory[]
+
+  // E-Commerce relationships
+  orders                   Order[]
+  dealerApplications       DealerApplication[]
+
+  @@index([sponsorId], name: "idx_users_sponsor_id")
+  @@map("users")
+}
+
+/// Wallet - One-to-One with User. Stores all financial balances including club funds
+model Wallet {
+  userId            Int      @id @map("user_id")
+  currentBalance    Decimal  @default(0.00) @map("current_balance") @db.Decimal(15, 2)
+  totalIncome       Decimal  @default(0.00) @map("total_income") @db.Decimal(15, 2)
+  dailyClubBonus    Decimal  @default(0.00) @map("daily_club_bonus") @db.Decimal(15, 2)
+  salaryClub        Decimal  @default(0.00) @map("salary_club") @db.Decimal(15, 2)
+  hajjClub          Decimal  @default(0.00) @map("hajj_club") @db.Decimal(15, 2)
+  shareholderClub   Decimal  @default(0.00) @map("shareholder_club") @db.Decimal(15, 2)
+  hajjLotteryClub   Decimal  @default(0.00) @map("hajj_lottery_club") @db.Decimal(15, 2)
+  rewardPoint       Decimal  @default(0.00) @map("reward_point") @db.Decimal(15, 2)
+  monthlyPrizePoint Decimal  @default(0.00) @map("monthly_prize_point") @db.Decimal(15, 2)
+  dueAccount        Decimal  @default(0.00) @map("due_account") @db.Decimal(15, 2)
+
+  // One-to-One relation back to User (ON DELETE RESTRICT for financial safety)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("wallets")
+}
+
+/// Package - Static lookup table for the 3 package types (Customer, Shareholder, Gold)
+model Package {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique @db.VarChar(50)
+  priceValue    Decimal       @map("price_value") @db.Decimal(15, 2)
+  validityDays  Int?          @map("validity_days")
+
+  // One-to-Many: a package type can be bought by many users
+  userPackages  UserPackage[]
+
+  @@map("packages")
+}
+
+/// UserPackage - Junction table tracking which user bought which package and its lifecycle
+model UserPackage {
+  id          Int           @id @default(autoincrement())
+  userId      Int           @map("user_id")
+  packageId   Int           @map("package_id")
+  status      PackageStatus @default(active)
+  activatedAt            DateTime      @default(now()) @map("activated_at")
+  expiresAt              DateTime?     @map("expires_at")
+  monthlyAccumulatedPv   Int           @default(0) @map("monthly_accumulated_pv")
+  countdownEndDate       DateTime?     @map("countdown_end_date")
+
+  // Relations
+  user        User          @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  package     Package       @relation(fields: [packageId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId], name: "idx_user_packages_user_id")
+  @@index([packageId], name: "idx_user_packages_package_id")
+  @@index([status], name: "idx_user_packages_status")
+  @@index([expiresAt], name: "idx_user_packages_expires_at")
+  @@map("user_packages")
+}
+
+/// Transaction - Core financial ledger. ALL money movements are logged here for ACID compliance
+model Transaction {
+  id          Int                 @id @default(autoincrement())
+  userId      Int                 @map("user_id")
+  amount      Decimal             @db.Decimal(15, 2)
+  type        TransactionType
+  category    TransactionCategory
+  description String?             @db.Text
+  walletField String?             @map("wallet_field") @db.VarChar(50)
+  referenceId Int?                @map("reference_id")
+  createdAt   DateTime            @default(now()) @map("created_at")
+
+  // Relations (ON DELETE RESTRICT - financial data must never be orphaned)
+  user        User                @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId], name: "idx_transactions_user_id")
+  @@index([category], name: "idx_transactions_category")
+  @@index([createdAt], name: "idx_transactions_created_at")
+  @@map("transactions")
+}
+
+/// Withdrawal - User cashout requests with 5% flat charge
+model Withdrawal {
+  id             Int              @id @default(autoincrement())
+  userId         Int              @map("user_id")
+  amount         Decimal          @db.Decimal(15, 2)
+  charge         Decimal          @db.Decimal(15, 2)
+  netPayable     Decimal          @map("net_payable") @db.Decimal(15, 2)
+  method            WithdrawalMethod
+  accountNumber     String           @map("account_number") @db.VarChar(50)
+  accountHolderName String           @map("account_holder_name") @db.VarChar(100)
+  status            WithdrawalStatus @default(pending)
+  adminNote         String?          @map("admin_note") @db.Text
+  createdAt         DateTime         @default(now()) @map("created_at")
+  processedAt       DateTime?        @map("processed_at")
+
+  // Relations
+  user           User             @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId], name: "idx_withdrawals_user_id")
+  @@index([status], name: "idx_withdrawals_status")
+  @@map("withdrawals")
+}
+
+/// Product - Physical products for e-commerce with dealer commission and PV points
+model Product {
+  id                         Int             @id @default(autoincrement())
+  name                       String          @db.VarChar(255)
+  slug                       String          @unique @db.VarChar(255)
+  category                   ProductCategory @default(other)
+  price                      Decimal         @db.Decimal(15, 2)
+  pvValue                    Decimal         @map("pv_value") @db.Decimal(15, 2)
+  dealerCommissionPercentage Decimal         @default(5.00) @map("dealer_commission_percentage") @db.Decimal(5, 2)
+  description                String?         @db.Text
+  imageUrl                   String?         @map("image_url") @db.VarChar(500)
+  stock                      Int             @default(0)
+  isFeatured                 Boolean         @default(false) @map("is_featured")
+  status                     ProductStatus   @default(active)
+  createdAt                  DateTime        @default(now()) @map("created_at")
+  updatedAt                  DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  orderItems                 OrderItem[]
+
+  @@index([category], name: "idx_products_category")
+  @@index([status], name: "idx_products_status")
+  @@index([isFeatured], name: "idx_products_is_featured")
+  @@map("products")
+}
+
+/// Order - E-commerce order placed by a user. Tracks total price, PV, and delivery status
+model Order {
+  id               Int         @id @default(autoincrement())
+  userId           Int         @map("user_id")
+  totalPrice       Decimal     @map("total_price") @db.Decimal(15, 2)
+  totalPv          Decimal     @map("total_pv") @db.Decimal(15, 2)
+  status           OrderStatus @default(pending)
+  shippingName     String      @map("shipping_name") @db.VarChar(100)
+  shippingPhone    String      @map("shipping_phone") @db.VarChar(15)
+  shippingAddress  String      @map("shipping_address") @db.Text
+  shippingDistrict String?     @map("shipping_district") @db.VarChar(100)
+  paymentMethod    String      @map("payment_method") @db.VarChar(50)
+  adminNote        String?     @map("admin_note") @db.Text
+  pvCredited       Boolean     @default(false) @map("pv_credited")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  user             User        @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  items            OrderItem[]
+
+  @@index([userId], name: "idx_orders_user_id")
+  @@index([status], name: "idx_orders_status")
+  @@index([createdAt], name: "idx_orders_created_at")
+  @@map("orders")
+}
+
+/// OrderItem - Individual product line-items within an Order
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int     @map("order_id")
+  productId Int     @map("product_id")
+  quantity  Int     @default(1)
+  unitPrice Decimal @map("unit_price") @db.Decimal(15, 2)
+  unitPv    Decimal @map("unit_pv") @db.Decimal(15, 2)
+
+  // Relations
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([orderId], name: "idx_order_items_order_id")
+  @@index([productId], name: "idx_order_items_product_id")
+  @@map("order_items")
+}
+
+/// DealerApplication - Members apply to become regional dealers
+model DealerApplication {
+  id          Int                       @id @default(autoincrement())
+  userId      Int                       @map("user_id")
+  shopName    String                    @map("shop_name") @db.VarChar(255)
+  shopAddress String                    @map("shop_address") @db.Text
+  district    String                    @db.VarChar(100)
+  division    String?                   @db.VarChar(100)
+  nidNumber   String?                   @map("nid_number") @db.VarChar(20)
+  status      DealerApplicationStatus   @default(pending)
+  adminNote   String?                   @map("admin_note") @db.Text
+  createdAt   DateTime                  @default(now()) @map("created_at")
+  updatedAt   DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  user        User                      @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId], name: "idx_dealer_applications_user_id")
+  @@index([status], name: "idx_dealer_applications_status")
+  @@map("dealer_applications")
+}
+
+/// Notice - Admin-posted announcements and notice ticker items
+model Notice {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  content   String?  @db.Text
+  isActive  Boolean  @default(true) @map("is_active")
+  isTicker  Boolean  @default(false) @map("is_ticker")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([isActive], name: "idx_notices_is_active")
+  @@map("notices")
+}
+
+/// GalleryImage - Corporate photos, event images, certificates
+model GalleryImage {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  imageUrl  String   @map("image_url") @db.VarChar(500)
+  category  String?  @db.VarChar(100)
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([isActive], name: "idx_gallery_images_is_active")
+  @@map("gallery_images")
+}
+
+/// UserActivityLog - Admin audit trail for every user action
+model UserActivityLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  action      String   @db.VarChar(100)
+  ipAddress   String?  @map("ip_address") @db.VarChar(45)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId], name: "idx_activity_logs_user_id")
+  @@index([action], name: "idx_activity_logs_action")
+  @@index([createdAt], name: "idx_activity_logs_created_at")
+  @@map("user_activity_logs")
+}
+
+/// FundTransfer - Records ID-to-ID balance transfers between users
+model FundTransfer {
+  id         Int      @id @default(autoincrement())
+  senderId   Int      @map("sender_id")
+  receiverId Int      @map("receiver_id")
+  amount     Decimal  @db.Decimal(15, 2)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations (ON DELETE RESTRICT - transfer records must never be orphaned)
+  sender     User     @relation("SenderTransfers", fields: [senderId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  receiver   User     @relation("ReceiverTransfers", fields: [receiverId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([senderId], name: "idx_fund_transfers_sender_id")
+  @@index([receiverId], name: "idx_fund_transfers_receiver_id")
+  @@map("fund_transfers")
+}
+
+/// ClubMembership - Tracks user eligibility for each of the 7 club types
+model ClubMembership {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  clubType   ClubType @map("club_type")
+  isEligible Boolean  @default(true) @map("is_eligible")
+  joinedAt   DateTime @default(now()) @map("joined_at")
+
+  // Relations
+  user       User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([userId, clubType], name: "uq_user_club")
+  @@index([userId], name: "idx_club_memberships_user_id")
+  @@index([clubType], name: "idx_club_memberships_club_type")
+  @@map("club_memberships")
+}
+
+/// ClubDistributionHistory - Logs each admin-triggered 100 PV distribution with per-club amounts
+model ClubDistributionHistory {
+  id                     Int      @id @default(autoincrement())
+  triggeredBy            Int      @map("triggered_by")
+  totalPvDistributed     Decimal  @map("total_pv_distributed") @db.Decimal(15, 2)
+  dailyClubAmount        Decimal  @map("daily_club_amount") @db.Decimal(15, 2)
+  shareholderClubAmount  Decimal  @map("shareholder_club_amount") @db.Decimal(15, 2)
+  hajjClubAmount         Decimal  @map("hajj_club_amount") @db.Decimal(15, 2)
+  rewardPointAmount      Decimal  @map("reward_point_amount") @db.Decimal(15, 2)
+  monthlyPrizeAmount     Decimal  @map("monthly_prize_amount") @db.Decimal(15, 2)
+  hajjLotteryAmount      Decimal  @map("hajj_lottery_amount") @db.Decimal(15, 2)
+  salaryClubAmount       Decimal  @map("salary_club_amount") @db.Decimal(15, 2)
+  eligibleMemberCounts   Json     @map("eligible_member_counts")
+  createdAt              DateTime @default(now()) @map("created_at")
+
+  // Relations
+  admin                  User     @relation(fields: [triggeredBy], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([triggeredBy], name: "idx_distribution_history_triggered_by")
+  @@index([createdAt], name: "idx_distribution_history_created_at")
+  @@map("club_distribution_history")
+}
+
+/// Settings - Dynamic configuration for Admin (e.g., Image URLs, text content)
+model Setting {
+  key   String @id @db.VarChar(100)
+  value String @db.Text
+
+  @@map("settings")
+}
