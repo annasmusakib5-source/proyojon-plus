@@ -42,7 +42,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
     }).catch(() => {});
   }, []);
 
-  const navItems = [
+  let navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Packages", href: "/packages", icon: Package },
     { name: "My Network", href: "/network", icon: Users },
@@ -56,7 +56,13 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
   ];
 
   if (user?.role === "admin") {
-    navItems.push({ name: "Admin Control", href: "/admin", icon: Shield });
+    navItems = [
+      { name: "Admin Control", href: "/admin", icon: Shield },
+      { name: "My Network", href: "/network", icon: Users },
+      { name: "Transactions", href: "/transactions", icon: History },
+      { name: "Withdraw Funds", href: "/withdraw", icon: ArrowDownToLine },
+      { name: "My Profile", href: "/profile", icon: UserCheck },
+    ];
   }
 
   const content = (
