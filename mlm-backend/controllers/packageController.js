@@ -1,5 +1,5 @@
 const db = require('../config/db');
-const { distributeGenerationBonus, distributeShareholderReferral } = require('../services/commissionService');
+const { distributeGenerationBonus, distributeShareholderReferral, distributeGlobalPV } = require('../services/commissionService');
 
 /**
  * POST /api/packages/purchase
@@ -139,14 +139,32 @@ const purchasePackage = async (req, res) => {
             [userId, req.ip || 'unknown', `Purchased ${pkgName} package for ${packagePrice}`]
         );
 
-        // --- TRIGGER COMMISSIONS ---
-        // 10. Trigger 5% Generation Bonus (Hajj Club)
-        // PV is 1000 for Customer, 5000 for Gold/Shareholder (same as price_value based on PRD)
-        if (pkgName === 'Customer') {
-            await distributeGenerationBonus(connection, userId, packagePrice);
-        }
+        // --- CONVERT PACKAGE PRICE TO PV AND ADD TO USER DASHBOARD ---
+        await connection.execute(
+            `UPDATE users SET accumulated_pv = accumulated_pv + ? WHERE id = ?`,
+            [packagePrice, userId]
+        );
 
-        // 11. Trigger 2.5% Referral Commission for Shareholder
+        await connection.execute(
+            `UPDATE user_packages SET monthly_accumulated_pv = monthly_accumulated_pv + ? 
+             WHERE user_id = ? AND status = 'active'`,
+            [packagePrice, userId]
+        );
+
+        await connection.execute(
+            `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, reference_id, created_at)
+             VALUES (?, ?, 'credit', 'deposit', ?, 'pv_points', ?, NOW())`,
+            [userId, packagePrice, `PV credited from ${pkgName} package purchase`, userPackageId]
+        );
+
+        // --- TRIGGER COMMISSIONS ---
+        // Trigger 5% Generation Bonus
+        await distributeGenerationBonus(connection, userId, packagePrice);
+
+        // Trigger Global Distribution across all 7 clubs based on percentage
+        await distributeGlobalPV(connection, packagePrice, userId, `Package-${userPackageId}`);
+
+        // Trigger 2.5% Referral Commission for Shareholder
         if (pkgName === 'Shareholder') {
             await distributeShareholderReferral(connection, userId, packagePrice);
         }
