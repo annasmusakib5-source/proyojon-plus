@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios";
 import { useCartStore, CartItem } from "@/store/cartStore";
 import {
@@ -60,6 +61,7 @@ export default function ShopPage() {
 
   const { addItem, items, getTotalItems, getTotalPrice, getTotalPv } = useCartStore();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);

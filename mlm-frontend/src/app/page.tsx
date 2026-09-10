@@ -30,6 +30,7 @@ import { api } from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { useRouter } from "next/navigation";
 
 interface FeaturedProduct {
   id: number;
@@ -67,6 +68,8 @@ export default function LandingPage() {
   const [heroImage, setHeroImage] = useState<string>("/hero-3d.jpg");
   const [heroTitle, setHeroTitle] = useState<string>("");
   const [heroSubtitle, setHeroSubtitle] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("all");
+  const router = useRouter();
   const [siteLogo, setSiteLogo] = useState<string>("/logo.jpg");
   const { user } = useAuthStore();
   const { t } = useTranslation();
