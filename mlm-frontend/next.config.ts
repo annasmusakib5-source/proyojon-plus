@@ -5,11 +5,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/:path*`,
+        destination: 'https://proyojon-plus.onrender.com/api/:path*',
       },
       {
         source: '/uploads/:path*',
-        destination: `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '')}/uploads/:path*`,
+        destination: 'https://proyojon-plus.onrender.com/uploads/:path*',
       },
     ];
   },
