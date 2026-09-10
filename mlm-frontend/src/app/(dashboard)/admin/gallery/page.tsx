@@ -191,10 +191,10 @@ export default function AdminGalleryPage() {
                 )}
                 <button
                   onClick={() => handleDelete(item.id)}
-                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/80 hover:bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-md"
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 hover:bg-red-600 text-white transition-colors backdrop-blur-sm shadow-md z-10"
                   title="Delete image"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
               <div className="p-3">
