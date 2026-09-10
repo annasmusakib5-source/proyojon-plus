@@ -103,7 +103,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Register Card */}
-        <div className="bg-gradient-to-br from-slate-900/90 via-[#1a1c29]/90 to-slate-950/90 backdrop-blur-xl p-8 rounded-3xl border-t border-l border-[#D4A843]/40 border-b border-r border-[#3B82F6]/20 shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_2px_15px_rgba(212,168,67,0.15),inset_0_-2px_15px_rgba(59,130,246,0.1)] relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#0B0F19] via-[#111827] to-[#030712] backdrop-blur-3xl p-8 rounded-3xl border border-white/5 shadow-[0_30px_60px_rgba(0,0,0,0.8),inset_0_2px_1px_rgba(255,255,255,0.1),inset_0_-4px_2px_rgba(0,0,0,0.5),inset_0_0_20px_rgba(212,168,67,0.1)] relative overflow-hidden">
           <h2 className="text-xl font-semibold text-[#E8EDF5] mb-1">Join the platform</h2>
           <p className="text-[#94A3B8] text-sm mb-6">Fill in your details to get started</p>
 
