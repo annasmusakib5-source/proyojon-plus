@@ -346,57 +346,69 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.productId}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border/40 hover:border-gold-500/20 transition-all"
+                  className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl bg-card border border-border/40 hover:border-gold-500/20 transition-all relative"
                 >
-                  {/* Product Image */}
-                  <div className="h-20 w-20 rounded-xl bg-secondary/60 flex items-center justify-center flex-shrink-0">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover rounded-xl" />
-                    ) : (
-                      <Package className="h-8 w-8 text-muted-foreground/50" />
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <h3 className="text-sm font-semibold text-foreground truncate">{item.name}</h3>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>৳{item.price.toFixed(0)} each</span>
-                      <span className="text-gold-400 font-medium">{item.pvValue} PV each</span>
-                    </div>
-                  </div>
-
-                  {/* Quantity Controls */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                      className="h-8 w-8 rounded-lg bg-secondary/60 border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-gold-500/30 transition-all"
-                    >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                      disabled={item.quantity >= item.stock}
-                      className="h-8 w-8 rounded-lg bg-secondary/60 border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-gold-500/30 transition-all disabled:opacity-40"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Subtotal */}
-                  <div className="text-right min-w-[80px]">
-                    <p className="text-sm font-bold">৳{(item.price * item.quantity).toFixed(0)}</p>
-                    <p className="text-[10px] text-gold-400 font-medium">{(item.pvValue * item.quantity).toFixed(0)} PV</p>
-                  </div>
-
-                  {/* Remove */}
+                  {/* Remove Button for Mobile (Top Right) */}
                   <button
                     onClick={() => removeItem(item.productId)}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    className="sm:hidden absolute top-4 right-4 h-8 w-8 rounded-lg flex items-center justify-center text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
+
+                  <div className="flex items-center gap-4 pr-10 sm:pr-0 w-full sm:w-auto">
+                    {/* Product Image */}
+                    <div className="h-20 w-20 rounded-xl bg-secondary/60 flex items-center justify-center flex-shrink-0">
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover rounded-xl" />
+                      ) : (
+                        <Package className="h-8 w-8 text-muted-foreground/50" />
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h3 className="text-sm font-semibold text-foreground truncate">{item.name}</h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-muted-foreground">
+                        <span>৳{item.price.toFixed(0)} each</span>
+                        <span className="text-gold-400 font-medium">{item.pvValue} PV each</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between sm:justify-end sm:gap-4 w-full sm:w-auto mt-2 sm:mt-0 sm:flex-1">
+                    {/* Quantity Controls */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                        className="h-8 w-8 rounded-lg bg-secondary/60 border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-gold-500/30 transition-all"
+                      >
+                        <Minus className="h-3.5 w-3.5" />
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        disabled={item.quantity >= item.stock}
+                        className="h-8 w-8 rounded-lg bg-secondary/60 border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-gold-500/30 transition-all disabled:opacity-40"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Subtotal */}
+                    <div className="text-right min-w-[80px]">
+                      <p className="text-sm font-bold">৳{(item.price * item.quantity).toFixed(0)}</p>
+                      <p className="text-[10px] text-gold-400 font-medium">{(item.pvValue * item.quantity).toFixed(0)} PV</p>
+                    </div>
+
+                    {/* Remove (Desktop) */}
+                    <button
+                      onClick={() => removeItem(item.productId)}
+                      className="hidden sm:flex h-8 w-8 rounded-lg items-center justify-center text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
