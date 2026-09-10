@@ -513,18 +513,20 @@ export default function LandingPage() {
                   whileHover={{ y: -4 }}
                   className="rounded-2xl bg-card border border-border/40 hover:border-gold-500/30 overflow-hidden transition-shadow hover:shadow-xl hover:shadow-gold-500/5"
                 >
-                  <div className="relative h-40 bg-gradient-to-br from-secondary/80 to-secondary/40 flex items-center justify-center">
+                  <Link href={`/shop/${product.slug}`} className="relative h-40 bg-gradient-to-br from-secondary/80 to-secondary/40 flex items-center justify-center block overflow-hidden">
                     {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
+                      <img src={product.image_url} alt={product.name} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
                     ) : (
                       <Package className="h-10 w-10 text-muted-foreground/40" />
                     )}
                     <div className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-gold-500/90 text-slate-950 text-xs font-bold">
                       {parseFloat(product.pv_value)} PV
                     </div>
-                  </div>
+                  </Link>
                   <div className="p-4 space-y-2">
-                    <h3 className="text-sm font-semibold text-foreground line-clamp-1">{product.name}</h3>
+                    <Link href={`/shop/${product.slug}`} className="block">
+                      <h3 className="text-sm font-semibold text-foreground line-clamp-1 hover:text-gold-400 transition-colors">{product.name}</h3>
+                    </Link>
                     {product.description && (
                       <p className="text-xs text-muted-foreground line-clamp-2">{product.description}</p>
                     )}

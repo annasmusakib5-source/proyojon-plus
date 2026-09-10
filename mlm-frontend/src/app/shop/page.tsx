@@ -223,7 +223,7 @@ export default function ShopPage() {
                   className="group rounded-2xl bg-card border border-border/40 hover:border-gold-500/30 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gold-500/5"
                 >
                   {/* Product Image */}
-                  <div className="relative h-48 bg-gradient-to-br from-secondary/80 to-secondary/40 flex items-center justify-center overflow-hidden">
+                  <Link href={`/shop/${product.slug}`} className="relative h-48 bg-gradient-to-br from-secondary/80 to-secondary/40 flex items-center justify-center overflow-hidden block">
                     {product.image_url ? (
                       <img
                         src={product.image_url}
@@ -249,13 +249,13 @@ export default function ShopPage() {
                       </div>
                     )}
 
-                    {/* Stock Warning */}
-                    {product.stock <= 10 && product.stock > 0 && (
-                      <div className="absolute bottom-3 left-3 px-2 py-0.5 rounded bg-red-500/80 text-white text-[10px] font-medium">
-                        Only {product.stock} left
-                      </div>
-                    )}
-                  </div>
+                      {/* Stock Warning */}
+                      {product.stock <= 10 && product.stock > 0 && (
+                        <div className="absolute bottom-3 left-3 px-2 py-0.5 rounded bg-red-500/80 text-white text-[10px] font-medium">
+                          Only {product.stock} left
+                        </div>
+                      )}
+                  </Link>
 
                   {/* Product Info */}
                   <div className="p-4 space-y-3">
@@ -263,9 +263,11 @@ export default function ShopPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-gold-500/80">
                         {categoryLabels[product.category] || product.category}
                       </span>
-                      <h3 className="text-sm font-semibold text-foreground line-clamp-2 mt-0.5 leading-snug">
-                        {product.name}
-                      </h3>
+                      <Link href={`/shop/${product.slug}`} className="block mt-0.5">
+                        <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug hover:text-gold-400 transition-colors">
+                          {product.name}
+                        </h3>
+                      </Link>
                     </div>
 
                     {product.description && (
