@@ -220,10 +220,11 @@ export default function ShopPage() {
               return (
                 <div
                   key={product.id}
-                  className="group rounded-2xl bg-card border border-border/40 hover:border-gold-500/30 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gold-500/5"
+                  onClick={() => router.push(`/shop/${product.slug}`)}
+                  className="group rounded-2xl bg-card border border-border/40 hover:border-gold-500/30 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gold-500/5 cursor-pointer"
                 >
                   {/* Product Image */}
-                  <Link href={`/shop/${product.slug}`} className="relative h-48 bg-gradient-to-br from-secondary/80 to-secondary/40 flex items-center justify-center overflow-hidden block">
+                  <div className="relative h-48 bg-gradient-to-br from-secondary/80 to-secondary/40 flex items-center justify-center overflow-hidden block">
                     {product.image_url ? (
                       <img
                         src={product.image_url}
@@ -255,7 +256,7 @@ export default function ShopPage() {
                           Only {product.stock} left
                         </div>
                       )}
-                  </Link>
+                  </div>
 
                   {/* Product Info */}
                   <div className="p-4 space-y-3">
@@ -263,11 +264,9 @@ export default function ShopPage() {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-gold-500/80">
                         {categoryLabels[product.category] || product.category}
                       </span>
-                      <Link href={`/shop/${product.slug}`} className="block mt-0.5">
-                        <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug hover:text-gold-400 transition-colors">
-                          {product.name}
-                        </h3>
-                      </Link>
+                      <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-snug mt-0.5 hover:text-gold-400 transition-colors">
+                        {product.name}
+                      </h3>
                     </div>
 
                     {product.description && (
@@ -290,7 +289,10 @@ export default function ShopPage() {
 
                       {product.stock > 0 ? (
                         <button
-                          onClick={() => handleAddToCart(product)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddToCart(product);
+                          }}
                           disabled={isAdded}
                           className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
                             isAdded
