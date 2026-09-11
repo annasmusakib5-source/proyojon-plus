@@ -15,62 +15,86 @@ const distributeGenerationBonus = async (connection, buyerUserId, pvAmount) => {
     
     if (bonusAmount <= 0) return;
 
+    // Find admin user to credit undistributed bonuses
+    const [admins] = await connection.execute("SELECT id FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+    const adminId = admins.length > 0 ? admins[0].id : null;
+
     let currentUserId = buyerUserId;
     let level = 1;
 
     // Traverse up to 5 levels
     while (level <= 5) {
+        let creditedTo = null;
+        let sponsorId = null;
+
         // Find the sponsor of the current user
         const [users] = await connection.execute(
             'SELECT sponsor_id FROM users WHERE id = ?',
             [currentUserId]
         );
 
-        if (users.length === 0 || !users[0].sponsor_id) {
-            // No more sponsors in the chain
-            break;
+        if (users.length > 0 && users[0].sponsor_id) {
+            sponsorId = users[0].sponsor_id;
+
+            // Check if sponsor is active
+            const [sponsors] = await connection.execute(
+                "SELECT id, status FROM users WHERE id = ?",
+                [sponsorId]
+            );
+
+            if (sponsors.length > 0 && sponsors[0].status === 'active') {
+                // Credit to Hajj Club
+                await connection.execute(
+                    'UPDATE wallets SET hajj_club = hajj_club + ?, current_balance = current_balance + ?, total_income = total_income + ? WHERE user_id = ?',
+                    [bonusAmount, bonusAmount, bonusAmount, sponsorId]
+                );
+
+                // Log Transaction for Hajj Club
+                await connection.execute(
+                    `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, created_at)
+                     VALUES (?, ?, 'credit', 'generation_bonus', ?, 'hajj_club', NOW())`,
+                    [
+                        sponsorId, 
+                        bonusAmount, 
+                        `Generation bonus (Level ${level}) to Hajj Fund from User ${buyerUserId}`
+                    ]
+                );
+
+                // Log Transaction for Current Balance
+                await connection.execute(
+                    `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, created_at)
+                     VALUES (?, ?, 'credit', 'generation_bonus', ?, 'current_balance', NOW())`,
+                    [
+                        sponsorId, 
+                        bonusAmount, 
+                        `Standard Generation bonus (Level ${level}) from User ${buyerUserId}`
+                    ]
+                );
+                
+                creditedTo = sponsorId;
+            }
+            
+            // Move up the chain
+            currentUserId = sponsorId;
         }
 
-        const sponsorId = users[0].sponsor_id;
-
-        // Check if sponsor is active
-        const [sponsors] = await connection.execute(
-            'SELECT id, status FROM users WHERE id = ?',
-            [sponsorId]
-        );
-
-        if (sponsors.length > 0 && sponsors[0].status === 'active') {
-            // Credit to Hajj Club
+        // If no active sponsor was found for this level, credit it to the company (Admin)
+        if (!creditedTo && adminId) {
             await connection.execute(
-                'UPDATE wallets SET hajj_club = hajj_club + ?, current_balance = current_balance + ?, total_income = total_income + ? WHERE user_id = ?',
-                [bonusAmount, bonusAmount, bonusAmount, sponsorId]
+                'UPDATE wallets SET current_balance = current_balance + ?, total_income = total_income + ? WHERE user_id = ?',
+                [bonusAmount, bonusAmount, adminId]
             );
-
-            // Log Transaction for Hajj Club
-            await connection.execute(
-                `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, created_at)
-                 VALUES (?, ?, 'credit', 'generation_bonus', ?, 'hajj_club', NOW())`,
-                [
-                    sponsorId, 
-                    bonusAmount, 
-                    `Generation bonus (Level ${level}) to Hajj Fund from User ${buyerUserId}`
-                ]
-            );
-
-            // Log Transaction for Current Balance
             await connection.execute(
                 `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, created_at)
                  VALUES (?, ?, 'credit', 'generation_bonus', ?, 'current_balance', NOW())`,
                 [
-                    sponsorId, 
+                    adminId, 
                     bonusAmount, 
-                    `Standard Generation bonus (Level ${level}) from User ${buyerUserId}`
+                    `Company Generation Commission (Level ${level} missed) from User ${buyerUserId}`
                 ]
             );
         }
 
-        // Move up the chain
-        currentUserId = sponsorId;
         level++;
     }
 };
@@ -86,40 +110,68 @@ const distributeShareholderReferral = async (connection, buyerUserId, spAmount) 
 
     if (commissionAmount <= 0) return;
 
+    // Find admin user to credit undistributed bonuses
+    const [admins] = await connection.execute("SELECT id FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
+    const adminId = admins.length > 0 ? admins[0].id : null;
+
+    let creditedTo = null;
+
     // Find the buyer's direct sponsor
     const [users] = await connection.execute(
         'SELECT sponsor_id FROM users WHERE id = ?',
         [buyerUserId]
     );
 
-    if (users.length === 0 || !users[0].sponsor_id) return;
+    if (users.length > 0 && users[0].sponsor_id) {
+        const sponsorId = users[0].sponsor_id;
 
-    const sponsorId = users[0].sponsor_id;
+        // Check if sponsor is active
+        const [sponsors] = await connection.execute(
+            "SELECT id, status FROM users WHERE id = ?",
+            [sponsorId]
+        );
 
-    // Check if sponsor is active
-    const [sponsors] = await connection.execute(
-        'SELECT id, status FROM users WHERE id = ?',
-        [sponsorId]
-    );
+        if (sponsors.length > 0 && sponsors[0].status === 'active') {
+            // Credit to current_balance AND increase total_income
+            await connection.execute(
+                `UPDATE wallets 
+                 SET current_balance = current_balance + ?, 
+                     total_income = total_income + ? 
+                 WHERE user_id = ?`,
+                [commissionAmount, commissionAmount, sponsorId]
+            );
 
-    if (sponsors.length > 0 && sponsors[0].status === 'active') {
-        // Credit to current_balance AND increase total_income
+            // Log Transaction
+            await connection.execute(
+                `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, created_at)
+                 VALUES (?, ?, 'credit', 'referral_bonus', ?, 'current_balance', NOW())`,
+                [
+                    sponsorId, 
+                    commissionAmount, 
+                    `Shareholder referral bonus from User ${buyerUserId}`
+                ]
+            );
+            
+            creditedTo = sponsorId;
+        }
+    }
+
+    // If no active sponsor found, credit it to the company (Admin)
+    if (!creditedTo && adminId) {
         await connection.execute(
             `UPDATE wallets 
              SET current_balance = current_balance + ?, 
                  total_income = total_income + ? 
              WHERE user_id = ?`,
-            [commissionAmount, commissionAmount, sponsorId]
+            [commissionAmount, commissionAmount, adminId]
         );
-
-        // Log Transaction
         await connection.execute(
             `INSERT INTO transactions (user_id, amount, type, category, description, wallet_field, created_at)
              VALUES (?, ?, 'credit', 'referral_bonus', ?, 'current_balance', NOW())`,
             [
-                sponsorId, 
+                adminId, 
                 commissionAmount, 
-                `Shareholder referral bonus from User ${buyerUserId}`
+                `Company Shareholder Referral Commission (Sponsor missed) from User ${buyerUserId}`
             ]
         );
     }

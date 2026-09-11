@@ -162,7 +162,7 @@ const purchasePackage = async (req, res) => {
         await distributeGenerationBonus(connection, userId, packagePrice);
 
         // Trigger Global Distribution across all 7 clubs based on percentage
-        await distributeGlobalPV(connection, packagePrice, userId, `Package-${userPackageId}`);
+        // Removed: Global PV is triggered by Admin only according to PRD.
 
         // Trigger 2.5% Referral Commission for Shareholder
         if (pkgName === 'Shareholder') {
