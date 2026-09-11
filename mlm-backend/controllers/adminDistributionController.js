@@ -10,7 +10,7 @@ const previewDistribution = async (req, res) => {
         // Query to get counts for clubs where eligibility is based on 'active' user status
         // Daily, Hajj, Reward, Monthly Prize, Hajj Lottery
         const [activeUsersResult] = await db.execute(
-            'SELECT count(id) as cnt FROM users WHERE status = "active"'
+            "SELECT count(id) as cnt FROM users WHERE status = 'active'"
         );
         const activeUsersCount = activeUsersResult[0].cnt;
 
@@ -84,7 +84,7 @@ const triggerDistribution = async (req, res) => {
 
         // 2. Fetch Eligible Members
         // Active Users (for Daily, Hajj, Reward, Monthly Prize, Hajj Lottery)
-        const [activeUsers] = await connection.execute('SELECT id FROM users WHERE status = "active"');
+        const [activeUsers] = await connection.execute("SELECT id FROM users WHERE status = 'active'");
         const activeUserIds = activeUsers.map(u => u.id);
 
         // Shareholder Users

@@ -50,7 +50,7 @@ const purchasePackage = async (req, res) => {
 
         // 2. Validate that user doesn't already have this exact package active
         const [existingPackages] = await connection.execute(
-            'SELECT id FROM user_packages WHERE user_id = ? AND package_id = ? AND status = "active"',
+            "SELECT id FROM user_packages WHERE user_id = ? AND package_id = ? AND status = 'active'",
             [userId, packageId]
         );
 
@@ -114,13 +114,13 @@ const purchasePackage = async (req, res) => {
 
         // 7. Check if this is their first active package, if so update user status to active
         const [allUserPackages] = await connection.execute(
-            'SELECT count(id) as cnt FROM user_packages WHERE user_id = ? AND status = "active"',
+            "SELECT count(id) as cnt FROM user_packages WHERE user_id = ? AND status = 'active'",
             [userId]
         );
 
         if (allUserPackages[0].cnt === 1) { // This is the first active package
             await connection.execute(
-                'UPDATE users SET status = "active", updated_at = NOW() WHERE id = ?',
+                "UPDATE users SET status = 'active', updated_at = NOW() WHERE id = ?",
                 [userId]
             );
         }

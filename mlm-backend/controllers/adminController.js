@@ -302,7 +302,7 @@ const unbanUser = async (req, res) => {
         await connection.beginTransaction();
 
         const [packages] = await connection.execute(
-            'SELECT count(id) as cnt FROM user_packages WHERE user_id = ? AND status = "active"',
+            "SELECT count(id) as cnt FROM user_packages WHERE user_id = ? AND status = 'active'",
             [targetUserId]
         );
         const newStatus = packages[0].cnt > 0 ? 'active' : 'inactive';

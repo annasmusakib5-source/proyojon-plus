@@ -148,7 +148,7 @@ const distributeGlobalPV = async (connection, basePv, sourceUserId, referenceId 
     };
 
     // 2. Fetch Eligible Members
-    const [activeUsers] = await connection.execute('SELECT id FROM users WHERE status = "active"');
+    const [activeUsers] = await connection.execute("SELECT id FROM users WHERE status = 'active'");
     const activeUserIds = activeUsers.map(u => u.id);
 
     const [shareholders] = await connection.execute(
