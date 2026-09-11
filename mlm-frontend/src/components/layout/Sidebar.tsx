@@ -58,6 +58,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
   if (user?.role === "admin") {
     navItems = [
       { name: "Admin Control", href: "/admin", icon: Shield },
+      { name: "My Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { name: "My Network", href: "/network", icon: Users },
       { name: "Transactions", href: "/transactions", icon: History },
       { name: "Withdraw Funds", href: "/withdraw", icon: ArrowDownToLine },
